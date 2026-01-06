@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Event {
+  id          String     @id @default(cuid())
+  title       String
+  date        DateTime
+  description String
+  capacity    Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  attendees   Attendee[]
+
+  @@index([date])
+}
+
+model Attendee {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, email])
+  @@index([eventId])
+}
